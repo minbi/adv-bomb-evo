@@ -8,8 +8,8 @@ import android.graphics.Paint;
  */
 public class Runner extends GameObject {
 
-    public Runner(float x, float y) {
-        super(x, y);
+    public Runner(float x, float y, GameView game) {
+        super(x, y, game);
         init();
     }
 

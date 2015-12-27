@@ -10,15 +10,17 @@ public class GameObject {
     float _x, _y;
     int _frameIndex;
     Paint _brush;
+    GameView _game;
 
     public GameObject() {
         init();
     }
 
-    public GameObject(float x, float y) {
+    public GameObject(float x, float y, GameView game) {
         init();
         _x = x;
         _y = y;
+        _game = game;
     }
 
     private void init() {
@@ -34,5 +36,8 @@ public class GameObject {
 
     public void update() {
         _x -= 25;
+        if (_x < 0 - 75) {
+            _game.trash(this);
+        }
     }
 }

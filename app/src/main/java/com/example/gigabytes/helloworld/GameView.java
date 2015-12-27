@@ -44,13 +44,28 @@ public class GameView extends View implements View.OnTouchListener {
 
     }
 
+    public synchronized void explode(Bomb bomb) {
+        if (pieces.contains(bomb)) {
+            System.out.println("Found bomb in list");
+            pieces.remove(bomb);
+            pieces.add(new GameObject(bomb._x, bomb._y, this));
+        }
+    }
+
+    public synchronized boolean trash(GameObject obj) {
+        if (pieces.contains(obj)) {
+            return pieces.remove(obj);
+        }
+        return false;
+    }
+
     public void generateRunner() {
 
     }
 
     public void update() {
-        for (GameObject piece : pieces) {
-            piece.update();
+        for (int i = 0; i < pieces.size(); ++i) {
+            pieces.get(i).update();
         }
     }
 
@@ -70,8 +85,6 @@ public class GameView extends View implements View.OnTouchListener {
         if (hoverPiece != null) {
             hoverPiece.draw(canvas);
         }
-
-        System.out.println("onDraw() called.");
     }
 
     @Override
@@ -80,13 +93,13 @@ public class GameView extends View implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 hoverPiece = null;
                 System.out.println(event.getX() + "," + event.getY());
-                GameObject piece = new Bomb(event.getX(), event.getY());
+                GameObject piece = new Bomb(event.getX(), event.getY(), this);
                 pieces.add(piece);
                 redraw();
                 break;
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-                hoverPiece = new Bomb(event.getX(), event.getY());
+                hoverPiece = new Bomb(event.getX(), event.getY(), this);
                 redraw();
                 break;
         }

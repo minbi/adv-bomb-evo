@@ -7,7 +7,7 @@ import android.app.Activity;
  */
 public class GameLoopThread extends Thread {
     private final static int FPS = 30;
-    private final static int FRAME_PERIOD = 1000 / 30;
+    private final static int FRAME_PERIOD = 1000 / FPS;
     private final static int MAX_FRAME_SKIPS = 5;
 
     private boolean _running;
