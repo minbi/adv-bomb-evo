@@ -18,6 +18,7 @@ public class GameView extends View implements View.OnTouchListener {
     GameObject hoverPiece;
     GameLoopThread looper;
     boolean first = true;
+    int runnerDelay;
 
     Paint mRunnerPaint, mBombPaint;
 
@@ -31,6 +32,7 @@ public class GameView extends View implements View.OnTouchListener {
     private void init() {
         this.setOnTouchListener(this);
         hoverPiece = null;
+        runnerDelay = 8 * 30;
         pieces = new ArrayList<>();
         mRunnerPaint = new Paint();
         mRunnerPaint.setColor(0x00bfff);
@@ -60,10 +62,17 @@ public class GameView extends View implements View.OnTouchListener {
     }
 
     public void generateRunner() {
-
+        if (runnerDelay <= 0) {
+            runnerDelay = (int) (Math.random() * 5 + 5) * 30;
+            int randX = (int) (Math.random() * 1300);
+            pieces.add(new Runner(randX, 2000, this));
+        } else {
+            --runnerDelay;
+        }
     }
 
     public void update() {
+        generateRunner();
         for (int i = 0; i < pieces.size(); ++i) {
             pieces.get(i).update();
         }
