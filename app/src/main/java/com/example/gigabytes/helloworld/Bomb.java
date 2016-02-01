@@ -28,6 +28,7 @@ public class Bomb extends GameObject {
         canvas.drawText("" + (countDown / 30), _x + 55, _y, _brush);
     }
 
+    @Override
     public void update() {
         if (countDown > 0) {
             countDown--;

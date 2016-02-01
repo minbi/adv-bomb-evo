@@ -24,10 +24,13 @@ public class Runner extends GameObject {
         canvas.drawCircle(_x, _y, 50, _brush);
     }
 
+    @Override
     public void update() {
         _y -= 2;
         if (_y < 0 - 25) {
             _game.trash(this);
         }
     }
+
+
 }
