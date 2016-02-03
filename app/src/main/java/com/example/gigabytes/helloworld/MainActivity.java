@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+/**
+ * Created by Min Bi on 12/20/2015.
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override

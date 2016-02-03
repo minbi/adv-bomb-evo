@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -15,12 +16,15 @@ import java.util.ArrayList;
  */
 public class GameView extends View implements View.OnTouchListener {
     ArrayList<GameObject> pieces;
+    ArrayList<Bomb> bombs;
+    ArrayList<Runner> runners;
+    ArrayList<Explosion> explosions;
     GameObject hoverPiece;
     GameLoopThread looper;
     boolean first = true;
-    int runnerDelay;
+    int runnerDelay, score;
 
-    Paint mRunnerPaint, mBombPaint;
+    Paint mRunnerPaint, mBombPaint, textPaint;
 
     public GameView(Context context, AttributeSet aset) {
         super(context, aset);
@@ -33,13 +37,20 @@ public class GameView extends View implements View.OnTouchListener {
         this.setOnTouchListener(this);
         hoverPiece = null;
         runnerDelay = 8 * 30;
+        score = 0;
         pieces = new ArrayList<>();
+        bombs = new ArrayList<>();
+        runners = new ArrayList<>();
+        explosions = new ArrayList<>();
         mRunnerPaint = new Paint();
         mRunnerPaint.setColor(0x00bfff);
         mRunnerPaint.setStyle(Paint.Style.FILL);
         mBombPaint = new Paint();
         mBombPaint.setColor(0xd1111a);
         mBombPaint.setStyle(Paint.Style.FILL);
+        textPaint = new Paint();
+        textPaint.setColor(0xd1111a);
+        textPaint.setStyle(Paint.Style.FILL);
     }
 
     public void placeBomb(int x, int y) {
@@ -50,12 +61,18 @@ public class GameView extends View implements View.OnTouchListener {
         if (pieces.contains(bomb)) {
             System.out.println("Found bomb in list");
             pieces.remove(bomb);
-            pieces.add(new GameObject(bomb._x, bomb._y, this));
+            bombs.remove(bomb);
+            Explosion explo = new Explosion(bomb._x, bomb._y, this);
+            pieces.add(explo);
+            explosions.add(explo);
         }
     }
 
     public synchronized boolean trash(GameObject obj) {
         if (pieces.contains(obj)) {
+            if (obj instanceof Bomb) bombs.remove(obj);
+            else if (obj instanceof Runner) runners.remove(obj);
+            else if (obj instanceof Explosion) explosions.remove(obj);
             return pieces.remove(obj);
         }
         return false;
@@ -63,9 +80,11 @@ public class GameView extends View implements View.OnTouchListener {
 
     public void generateRunner() {
         if (runnerDelay <= 0) {
-            runnerDelay = (int) (Math.random() * 5 + 5) * 30;
+            runnerDelay = (int) (Math.random() * 5 + 2) * 30;
             int randX = (int) (Math.random() * 1300);
-            pieces.add(new Runner(randX, 2000, this));
+            Runner r = new Runner(randX, 2000, this);
+            pieces.add(r);
+            runners.add(r);
         } else {
             --runnerDelay;
         }
@@ -75,6 +94,32 @@ public class GameView extends View implements View.OnTouchListener {
         generateRunner();
         for (int i = 0; i < pieces.size(); ++i) {
             pieces.get(i).update();
+        }
+        intersect();
+    }
+
+    private void intersect() {
+        for (int i = 0; i < explosions.size(); ++i) {
+            Explosion e = explosions.get(i);
+            for (int j = 0; j < runners.size(); ++ j) {
+                Runner r = runners.get(j);
+                ArrayList<Point> r_pts = new ArrayList<>();
+                r_pts.add(new Point(r._x - 50, r._y));
+                r_pts.add(new Point(r._x + 50, r._y));
+                r_pts.add(new Point(r._x, r._y + 50));
+                r_pts.add(new Point(r._x, r._y - 50));
+                ArrayList<Point> e_pts = new ArrayList<>();
+                e_pts.add(new Point(e._x + 75, e._y - 75));
+                e_pts.add(new Point(e._x -75, e._y+75));
+                e_pts.add(new Point(e._x - 75, e._y - 75));
+                e_pts.add(new Point(e._x + 75, e._y + 75));
+                if (e.checkIntersect(r_pts) || r.checkIntersect(e_pts)) {
+                    ++score;
+                    r.setDead();
+                    trash(e);
+                    --i;
+                }
+            }
         }
     }
 
@@ -86,7 +131,7 @@ public class GameView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+        canvas.drawText("" + score, 500, 500, textPaint);
         for (GameObject piece : pieces) {
             piece.draw(canvas);
         }
@@ -102,8 +147,9 @@ public class GameView extends View implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 hoverPiece = null;
                 System.out.println(event.getX() + "," + event.getY());
-                GameObject piece = new Bomb(event.getX(), event.getY(), this);
+                Bomb piece = new Bomb(event.getX(), event.getY(), this);
                 pieces.add(piece);
+                bombs.add(piece);
                 redraw();
                 break;
             case MotionEvent.ACTION_DOWN:

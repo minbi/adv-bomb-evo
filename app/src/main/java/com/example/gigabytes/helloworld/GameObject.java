@@ -2,6 +2,9 @@ package com.example.gigabytes.helloworld;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+
+import java.util.ArrayList;
 
 /**
  * Created by Min Bi on 12/21/2015.
