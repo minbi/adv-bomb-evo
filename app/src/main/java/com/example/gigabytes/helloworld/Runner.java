@@ -35,10 +35,14 @@ public class Runner extends GameObject {
     }
 
     public void setDead() {
+        dead = true;
         _brush.setColor(Color.GREEN);
     }
 
     public boolean checkIntersect(ArrayList<Point> pts) {
+        if (dead) {
+            return false;
+        }
         for (Point p : pts) {
             if (Math.pow(p.x - _x, 2) + Math.pow(p.y - _y,2) < Math.pow(radius, 2)) {
                 return true;

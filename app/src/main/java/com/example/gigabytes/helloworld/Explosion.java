@@ -7,7 +7,7 @@ import android.graphics.Rect;
 import java.util.ArrayList;
 
 /**
- * Created by Gigabytes on 2/2/2016.
+ * Created by Min Bi on 2/2/2016.
  */
 public class Explosion extends GameObject {
 

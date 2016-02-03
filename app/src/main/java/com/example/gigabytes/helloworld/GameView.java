@@ -103,6 +103,9 @@ public class GameView extends View implements View.OnTouchListener {
             Explosion e = explosions.get(i);
             for (int j = 0; j < runners.size(); ++ j) {
                 Runner r = runners.get(j);
+                if (r.dead) {
+                    continue;
+                }
                 ArrayList<Point> r_pts = new ArrayList<>();
                 r_pts.add(new Point(r._x - 50, r._y));
                 r_pts.add(new Point(r._x + 50, r._y));
@@ -131,7 +134,7 @@ public class GameView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText("" + score, 500, 500, textPaint);
+        canvas.drawText("Score: " + score, 500, 500, textPaint);
         for (GameObject piece : pieces) {
             piece.draw(canvas);
         }
