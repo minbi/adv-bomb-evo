@@ -3,7 +3,9 @@ package com.example.gigabytes.helloworld;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +27,7 @@ public class GameView extends View implements View.OnTouchListener {
     int runnerDelay, score;
 
     Paint mRunnerPaint, mBombPaint, textPaint;
+
 
     public GameView(Context context, AttributeSet aset) {
         super(context, aset);
@@ -49,8 +52,11 @@ public class GameView extends View implements View.OnTouchListener {
         mBombPaint.setColor(0xd1111a);
         mBombPaint.setStyle(Paint.Style.FILL);
         textPaint = new Paint();
-        textPaint.setColor(0xd1111a);
+        textPaint.setColor(Color.BLACK);
         textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setTextSize(88F);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
     }
 
     public void placeBomb(int x, int y) {
@@ -134,7 +140,7 @@ public class GameView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText("Score: " + score, 500, 500, textPaint);
+        canvas.drawText("Score: " + score, 5, 80, textPaint);
         for (GameObject piece : pieces) {
             piece.draw(canvas);
         }
