@@ -121,6 +121,7 @@ public class GameView extends View implements View.OnTouchListener {
                     r.setDead();
                     trash(e);
                     --i;
+                    break; // break so we only remove one runner per explosion
                 }
             }
         }
